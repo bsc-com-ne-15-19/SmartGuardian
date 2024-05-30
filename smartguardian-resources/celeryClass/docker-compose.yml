@@ -1,0 +1,126 @@
+version: '3.8'
+
+services:
+  redis_celery:
+    image: redis:7.2.4-alpine
+    command: redis-server --port 6379
+    ports:
+      - 6379:6379
+
+  redis_channels:
+    image: redis:7.2.4-alpine
+    command: redis-server --port 6380
+    ports:
+      - 6380:6380
+
+  django:
+    container_name: django
+    build: 
+      context: ./dcelery
+    command: python manage.py runserver 0.0.0.0:8000 #daphne -u /tmp/daphne.sock dcelery.asgi:application
+    volumes: 
+      - ./dcelery:/usr/src/app/
+    ports:
+      - "8001:8000"
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-j3dbl-q+*i32)m*j=+7gp1pwqe5k3l!dmz-g*i9$avf4qm^b4x
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+    depends_on:
+      - redis_celery
+      - redis_channels
+      - postgres
+
+  celery:
+    container_name: celery
+    build: 
+      context: ./dcelery
+    command: celery --app=dcelery worker -l INFO
+    volumes: 
+      - ./dcelery:/usr/src/app/
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-j3dbl-q+*i32)m*j=+7gp1pwqe5k3l!dmz-g*i9$avf4qm^b4x
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+    depends_on:
+      - redis_celery
+
+  postgres:
+    container_name: postgres
+    image: postgres:16.3-alpine3.19
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+
+
+# version: '3.8'
+
+# services:
+#   redis_celery:
+#     image: redis:7.2.4-alpine
+#     command: redis-server --port 6379
+#     ports:
+#       - 6379:6379
+
+#   redis_channels:
+#     image: redis:7.2.4-alpine
+#     command: redis-server --port 6380
+#     ports:
+#       - 6380:6380
+
+#   django:
+#     container_name: django
+#     build: 
+#       context: ./dcelery
+#     command: uvicorn dcelery.asgi:application --reload --host 0.0.0.0 --port 8000
+#     volumes: 
+#       - ./dcelery:/usr/src/app/
+#     ports:
+#       - "8001:8000"
+#     environment:
+#       - DEBUG=1
+#       - SECRET_KEY=django-insecure-j3dbl-q+*i32)m*j=+7gp1pwqe5k3l!dmz-g*i9$avf4qm^b4x
+#       - ALLOWED_HOSTS=localhost,127.0.0.1
+#       - POSTGRES_DB=postgres
+#       - POSTGRES_USER=postgres
+#       - POSTGRES_PASSWORD=1234
+#     depends_on:
+#       - redis_celery
+#       - redis_channels
+#       - postgres
+  
+#   celery:
+#     container_name: celery
+#     build: 
+#       context: ./dcelery
+#     command: celery --app=dcelery worker -l  INFO
+#     volumes: 
+#       - ./dcelery:/usr/src/app/
+#     environment:
+#       - DEBUG=1
+#       - SECRET_KEY=django-insecure-j3dbl-q+*i32)m*j=+7gp1pwqe5k3l!dmz-g*i9$avf4qm^b4x
+#       - ALLOWED_HOSTS=localhost,127.0.0.1
+#       - POSTGRES_DB=postgres
+#       - POSTGRES_USER=postgres
+#       - POSTGRES_PASSWORD=1234
+#     depends_on:
+#       - redis_celery
+
+#   postgres:
+#     container_name: postgres
+#     image: postgres:16.3-alpine3.19
+#     ports:
+#       - "5432:5432"
+#     environment:
+#       - POSTGRES_DB=postgres
+#       - POSTGRES_USER=postgres
+#       - POSTGRES_PASSWORD=1234
