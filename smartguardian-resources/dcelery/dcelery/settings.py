@@ -135,7 +135,9 @@ MAPBOX_API_KEY = os.environ.get("MAPBOX_API_KEY")
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lusaka'
+
 
 USE_I18N = True
 
