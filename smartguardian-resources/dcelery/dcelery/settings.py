@@ -14,7 +14,11 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG")
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
+allowed_from_env = os.environ.get("ALLOWED_HOSTS").split(",")
+
+ngrok_url = '8f70-105-234-162-40.ngrok-free.app'
+ALLOWED_HOSTS = allowed_from_env + [ngrok_url]
+# ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
 
 
 # Application definition
@@ -135,7 +139,9 @@ MAPBOX_API_KEY = os.environ.get("MAPBOX_API_KEY")
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lusaka'
+
 
 USE_I18N = True
 
