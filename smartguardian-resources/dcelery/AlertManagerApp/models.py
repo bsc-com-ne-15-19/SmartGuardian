@@ -36,7 +36,7 @@ from django.conf import settings
 class AlertManager(models.Model):
     phone_number = models.ForeignKey(PhoneNumbers, on_delete=models.CASCADE)
     student_name = models.CharField(max_length=100)
-    location = models.CharField()
+    location = models.CharField(max_length=255, blank=True, null=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -47,9 +47,9 @@ class AlertManager(models.Model):
     class Meta:
         unique_together = ('phone_number', 'timestamp',)
 
-    def save(self, *args, **kwargs):
-        if self.latitude is not None and self.longitude is not None:
-            g = geocoder.mapbox([self.latitude, self.longitude], method='reverse', key=settings.MAPBOX_API_KEY)
-            if g.ok:
-                self.location = g.address
-        super(AlertManager, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if self.latitude is not None and self.longitude is not None:
+    #         g = geocoder.mapbox([self.latitude, self.longitude], method='reverse', key=settings.MAPBOX_API_KEY)
+    #         if g.ok:
+    #             self.location = g.address
+    #     super(AlertManager, self).save(*args, **kwargs)
