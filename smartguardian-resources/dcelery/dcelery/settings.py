@@ -16,7 +16,7 @@ DEBUG = os.environ.get("DEBUG")
 
 allowed_from_env = os.environ.get("ALLOWED_HOSTS").split(",")
 
-ngrok_url = '8f70-105-234-162-40.ngrok-free.app'
+ngrok_url = '0cc0-105-234-166-2.ngrok-free.app'
 ALLOWED_HOSTS = allowed_from_env + [ngrok_url]
 # ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
 
@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'newapp',
     'DeviceApp',
     'AlertManagerApp',
     'StudentManagerApp',
