@@ -1,0 +1,3 @@
+[submodule "smartguardian-frontend/smart-guardian"]
+	path = smartguardian-frontend/smart-guardian
+	url = https://github.com/bsc-com-ne-15-19/smart-guardian.git
