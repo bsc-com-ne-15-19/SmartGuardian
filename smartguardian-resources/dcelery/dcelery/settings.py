@@ -14,10 +14,16 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG")
 
-allowed_from_env = os.environ.get("ALLOWED_HOSTS").split(",")
+# allowed_from_env = os.environ.get("ALLOWED_HOSTS").split(",")
 
-ngrok_url = '0cc0-105-234-166-2.ngrok-free.app'
-ALLOWED_HOSTS = allowed_from_env + [ngrok_url]
+# ngrok_url = 'eb5f-105-234-164-2.ngrok-free.app'
+# render_url = 'smart-guardian-2.onrender.com'
+
+# ALLOWED_HOSTS = allowed_from_env + [ngrok_url, render_url]
+ALLOWED_HOSTS = ['*']
+
+# ngrok_url = 'eb5f-105-234-164-2.ngrok-free.app'
+# ALLOWED_HOSTS = allowed_from_env + [ngrok_url]
 # ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
 
 
