@@ -1,0 +1,50 @@
+.marker {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: blue;
+    border: 0.2rem solid white;
+    position: relative;
+  }
+  .marker::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 255, 0.3);
+    transform: translate(-50%, -50%);
+    animation: pulseBlue 2s infinite;
+  }
+  .marker.alert {
+    background-color: red;
+  }
+  .marker.alert::before {
+    background-color: rgba(255, 0, 0, 0.3);
+    animation: pulseRed 2s infinite;
+  }
+  @keyframes pulseBlue {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 0;
+    }
+  }
+  @keyframes pulseRed {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 0;
+    }
+  }
+  .PopupContent {
+    min-width: 200px;
+  }
