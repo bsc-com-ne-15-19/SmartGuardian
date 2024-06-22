@@ -31,6 +31,7 @@ from django.db import models
 from DeviceApp.models import PhoneNumbers
 import geocoder
 from django.conf import settings
+# import osmnx as ox
 
 
 class AlertManager(models.Model):
@@ -47,9 +48,33 @@ class AlertManager(models.Model):
     class Meta:
         unique_together = ('phone_number', 'timestamp',)
 
+    def save(self, *args, **kwargs):
+        if self.latitude is not None and self.longitude is not None:
+            g = geocoder.mapbox([self.latitude, self.longitude], method='reverse', key=settings.MAPBOX_API_KEY)
+            if g.ok:
+                self.location = g.address
+        super(AlertManager, self).save(*args, **kwargs)
+
+
     # def save(self, *args, **kwargs):
     #     if self.latitude is not None and self.longitude is not None:
-    #         g = geocoder.mapbox([self.latitude, self.longitude], method='reverse', key=settings.MAPBOX_API_KEY)
+    #         g = geocoder.google([self.latitude, self.longitude], method='reverse', key='YOUR_API_KEY')
     #         if g.ok:
-    #             self.location = g.address
+    #             self.location = g.street
     #     super(AlertManager, self).save(*args, **kwargs)
+
+# def save(self, *args, **kwargs):
+#     if self.latitude is not None and self.longitude is not None:
+#         # Create a graph from the point's coordinates
+#         G = ox.graph_from_point((self.latitude, self.longitude), dist=500, network_type='drive')
+        
+#         # Find the closest edge (road) to the point
+#         edge = ox.get_nearest_edge(G, (self.latitude, self.longitude))
+        
+#         # Get the properties of the edge
+#         edge_data = G.get_edge_data(*edge[:2])
+        
+#         # Set the location to the name of the road
+#         self.location = edge_data[0]['name']
+        
+#     super(AlertManager, self).save(*args, **kwargs)

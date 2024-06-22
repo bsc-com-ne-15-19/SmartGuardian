@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'DeviceApp',
     'AlertManagerApp',
     'StudentManagerApp',
@@ -57,14 +58,23 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
-
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
         # Other permission classes if needed
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
     # Other settings...
 }
+# REST_FRAMEWORK = {
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.AllowAny',
+#         # Other permission classes if needed
+#     ],
+#     # Other settings...
+# }
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -102,6 +112,9 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             "hosts": [('redis_channels', 6380)],
         },
+        # 'MIDDLEWARE': [
+        #     'your_project.middleware.TokenAuthMiddlewareStack',
+        # ],
     },
 }
 
@@ -263,3 +276,6 @@ CACHES = {
 #         "LOCATION": "redis://127.0.0.1:6379/1",
 #     }
 # }
+# CORS_ALLOWED_ORIGINS = [
+#     'https://6674f756b8e00c1a9198641c--rad-marigold-883e04.netlify.app/',  # Replace with your Netlify frontend URL
+# ]
