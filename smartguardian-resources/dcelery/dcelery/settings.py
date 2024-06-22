@@ -22,11 +22,6 @@ DEBUG = os.environ.get("DEBUG")
 # ALLOWED_HOSTS = allowed_from_env + [ngrok_url, render_url]
 ALLOWED_HOSTS = ['*']
 
-# ngrok_url = 'eb5f-105-234-164-2.ngrok-free.app'
-# ALLOWED_HOSTS = allowed_from_env + [ngrok_url]
-# ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
-
-
 # Application definition
 
 INSTALLED_APPS = [
