@@ -1,32 +1,28 @@
-# from rest_framework import serializers
-# from .models import AlertManager
-
-# class AlertManagerSerializer(serializers.ModelSerializer):
-#     alert_count = serializers.IntegerField()
-#     alert_status = serializers.SerializerMethodField()
-#     phone_number = serializers.CharField(source='phone_number.phone_number')
-
-#     class Meta:
-#         model = AlertManager
-#         fields = ['phone_number', 'student_name', 'alert_started', 'alert_stopped', 'alert_status', 'alert_count', 'location']
-
-#     def get_alert_status(self, obj):
-#         return 'Ongoing' if obj['alert_stopped'] is None else 'Stopped'
-
 from rest_framework import serializers
-from .models import AlertManager
-from DeviceApp.serializers import PhoneNumbersSerializer
 
-class AlertManagerSerializer(serializers.ModelSerializer):
-    phone_number = PhoneNumbersSerializer(read_only=True)
-    alert_count = serializers.IntegerField()
-    alert_status = serializers.SerializerMethodField()
+class AlertManagerSerializer(serializers.Serializer):
+    phone_number = serializers.CharField()
+    student_name = serializers.CharField()
     timestamp = serializers.DateTimeField()
-
+    alert_status = serializers.CharField()
+    alert_count = serializers.IntegerField()
+    location = serializers.CharField()
 
     class Meta:
-        model = AlertManager
         fields = ['phone_number', 'student_name', 'timestamp', 'alert_status', 'alert_count', 'location']
 
-    def get_alert_status(self, obj):
-        return 'Ongoing' if obj.alert_count is None else 'Stopped'
+
+
+# from rest_framework import serializers
+
+# class AlertManagerSerializer(serializers.Serializer):
+#     id = serializers.IntegerField()
+#     firstName = serializers.CharField(max_length=100)
+#     surname = serializers.CharField(max_length=100, allow_blank=True)
+#     timeTriggerdAlert = serializers.DateTimeField()
+#     counts = serializers.IntegerField()
+#     location = serializers.CharField(max_length=255, allow_blank=True, allow_null=True)
+#     status = serializers.CharField(max_length=20)
+
+#     class Meta:
+#         fields = ['id', 'firstName', 'surname', 'timeTriggerdAlert', 'counts', 'location', 'status']

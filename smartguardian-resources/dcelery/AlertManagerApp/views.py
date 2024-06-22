@@ -1,42 +1,45 @@
-# from django.shortcuts import render
-
-# from rest_framework.views import APIView
-# from rest_framework.response import Response
-# from django.db.models import Count
-# from .models import AlertManager
-# from .serializers import AlertManagerSerializer
-# # Create your views here.
-
-# class AlertSummaryView(APIView):
-#     def get(self, request):
-#         alerts = AlertManager.objects.values(
-#             'phone_number',
-#             'student_name',
-#             'alert_started',
-#             'alert_stopped',
-#             'location'
-#         ).annotate(
-#             alert_count=Count('id')
-#         ).order_by('-alert_count')
         
-#         for alert in alerts:
-#             alert['alert_status'] = 'Ongoing' if alert['alert_stopped'] is None else 'Stopped'
-
-#         serializer = AlertManagerSerializer(alerts, many=True)
-#         return Response(serializer.data)
-
-# alerts/views.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Count
-from .models import AlertManager
+from django.core.cache import cache
+from .tasks import aggregate_alert_data
 from .serializers import AlertManagerSerializer
 
 class AlertSummaryView(APIView):
     def get(self, request):
-        alerts = AlertManager.objects.annotate(
-            alert_count=Count('id')
-        ).order_by('-alert_count')
-        
-        serializer = AlertManagerSerializer(alerts, many=True)
+        # Fetch the cached data
+        frontend_data = aggregate_alert_data()
+        # cache.get('aggregated_alert_data')
+
+        if not frontend_data:
+            # If cache is empty, trigger the aggregation task
+            aggregate_alert_data.delay()
+            frontend_data = []
+            print(f"\n\n\n\n{frontend_data}\n\n\n\n")
+
+
+        serializer = AlertManagerSerializer(frontend_data, many=True)
         return Response(serializer.data)
+
+
+# from rest_framework.views import APIView
+# from rest_framework.response import Response
+# from django.core.cache import cache
+# from .tasks import update_cache_with_alert_data_async
+# from .serializers import AlertManagerSerializer
+
+# class AlertSummaryView(APIView):
+#     def get(self, request):
+#         # Fetch the cached data
+#         frontend_data = update_cache_with_alert_data_async()
+#         if frontend_data is None:
+#             # If cache is empty, trigger the aggregation task
+#             update_cache_with_alert_data_async.delay()
+#             return Response({"message": "Data is being prepared, please check back shortly."}, status=202)
+#         elif not frontend_data:
+#             print("Cached data is an empty list")
+
+#         print(f"\n\n\n\nRetrieved frontend_data: {frontend_data}\n\n\n\n")
+
+#         serializer = AlertManagerSerializer(frontend_data, many=True)
+#         return Response(serializer.data)

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'StudentManagerApp',
     'APIGateway',
     'corsheaders',
+    # 'userAccounts',
 ]
 
 MIDDLEWARE = [
@@ -117,6 +118,18 @@ DATABASES = {
         'PORT': '5432',          
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'postgres',
+#         'USER': 'postgres',
+#         'PASSWORD': '1234',
+#         'HOST': 'postgres',   # Or your database host
+#         'PORT': '5432',          
+#     }
+# }
 
 
 # Password validation
@@ -222,3 +235,31 @@ LOGGING = {
         },
     },
 }
+
+# from celery.schedules import crontab
+
+# CELERY_BEAT_SCHEDULE = {
+#     'aggregate-alert-data-every-hour': {
+#         'task': 'AlertManagerApp.tasks.aggregate_alert_data',
+#         'schedule': crontab(minute=0, hour='*/1'),  # Every hour
+#     },
+# }
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.redis.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379",
+#     }
+# }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+# AUTH_USER_MODEL = 'userAccounts.CustomUser'
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.redis.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379/1",
+#     }
+# }
