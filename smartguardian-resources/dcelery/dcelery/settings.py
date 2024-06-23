@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'AlertManagerApp',
     'StudentManagerApp',
     'APIGateway',
-    'corsheaders',
+    # 'corsheaders',
     # 'userAccounts',
 ]
 
@@ -271,6 +271,3 @@ CACHES = {
 #         "LOCATION": "redis://127.0.0.1:6379/1",
 #     }
 # }
-# CORS_ALLOWED_ORIGINS = [
-#     'https://6674f756b8e00c1a9198641c--rad-marigold-883e04.netlify.app/',  # Replace with your Netlify frontend URL
-# ]
