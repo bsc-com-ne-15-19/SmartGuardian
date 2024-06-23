@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: features/auth/authApiSlice.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: features/auth/authApiSlice.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { apiSlice } from '@/app/api/apiSlice';
+import { setLogout } from '@/features/auth/authSlice';
+import { setLogin } from './authSlice';
+import { accessToken } from 'mapbox-gl';
+
+/**
+ * A function that creates an API slice for authentication endpoints.
+ *
+ * @param {object} apiSlice - The API slice object.
+ * @returns {object} - The auth API slice.
+ */
+export const authApiSlice = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    /**
+     * Endpoint for user login.
+     *
+     * @param {object} credentials - The user credentials.
+     * @returns {object} - The login response.
+     */
+    login: builder.mutation({
+      query: (credentials) => ({
+        url: 'login_api/login/',
+        method: 'POST',
+        body: { ...credentials },
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          console.log(Object.keys(data));  // print keys of the response data
+          console.log(Object.values(data));  // print values of the response data
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    }),
+
+    /**
+     * Endpoint for user registration.
+     *
+     * @param {object} credentials - The user credentials.
+     * @returns {object} - The registration response.
+     */
+    register: builder.mutation({
+      query: (credentials) => ({
+        url: 'login_api/login/',
+        method: 'POST',
+        body: { ...credentials },
+      }),
+    }),
+
+    /**
+     * Endpoint for user logout.
+     *
+     * @returns {void}
+     */
+    logout: builder.mutation({
+      query: () => ({
+        url: '/auth/logout',
+        method: 'POST',
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(apiSlice.util.resetApiState());
+          dispatch(setLogout);
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    }),
+
+    /**
+     * Endpoint for refreshing user tokens.
+     *
+     * @returns {void}
+     */
+    refresh: builder.mutation({
+      query: () => ({
+        url: 'login_api/login/',
+        method: 'GET',
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          // console.log(Object.keys(data));  // print keys of the response data
+          if ('access_token' in data &amp;&amp; 'refresh_token' in data) {
+            dispatch(setLogin({ access_token: data.access, refresh_token: data.refresh }));
+          } else {
+            // console.log('One or both keys do not exist');
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    }),
+  }),
+});
+
+export const {
+  useLoginMutation,
+  useRegisterMutation,
+  useLogoutMutation,
+  useRefreshMutation,
+} = authApiSlice;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html"></a></li><li><a href="global.html#AlertsList">AlertsList</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Form">Form</a></li><li><a href="global.html#NewUserForm">NewUserForm</a></li><li><a href="global.html#User">User</a></li><li><a href="global.html#UsersList">UsersList</a></li><li><a href="global.html#addNewUser">addNewUser</a></li><li><a href="global.html#authApiSlice">authApiSlice</a></li><li><a href="global.html#authSlice">authSlice</a></li><li><a href="global.html#createStudentSchema">createStudentSchema</a></li><li><a href="global.html#deleteUser">deleteUser</a></li><li><a href="global.html#getUsers">getUsers</a></li><li><a href="global.html#initialState">initialState</a></li><li><a href="global.html#initialValuesCreateStudent">initialValuesCreateStudent</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#register">register</a></li><li><a href="global.html#selectById">selectById</a></li><li><a href="global.html#selectIds">selectIds</a></li><li><a href="global.html#selectUsersData">selectUsersData</a></li><li><a href="global.html#selectUsersResult">selectUsersResult</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#usersAdapter">usersAdapter</a></li><li><a href="global.html#usersApiSlice">usersApiSlice</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sun Jun 23 2024 06:28:27 GMT+0200 (Central Africa Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,5 +1,9 @@
+/**
+ * Header component for the application.
+ * Renders the header bar with navigation links and buttons.
+ */
 import * as React from 'react';
-
+import MenuIcon from '@mui/icons-material/Menu';
 import { AccountCircle, CrisisAlert } from '@mui/icons-material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -77,7 +81,7 @@ function Header() {
               /> */}
               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                 <MenuItem
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate('/home')}
                   sx={{ py: '6px', px: '12px', ml: '12px' }}
                 >
                   <Typography variant='body2' color='text.primary'>
@@ -111,11 +115,12 @@ function Header() {
                 Alerts
               </Button>
               <Button
+                onClick={() => navigate('/')}
                 sx={{ color: '#222', textTransform: 'capitalize' }}
                 // variant='outlined'
                 size='small'
                 startIcon={<AccountCircle sx={{ color: '#222' }} />}
-              >
+                >
                 Signout
               </Button>
               {/* <Button

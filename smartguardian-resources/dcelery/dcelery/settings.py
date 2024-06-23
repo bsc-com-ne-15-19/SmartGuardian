@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'AlertManagerApp',
     'StudentManagerApp',
     'APIGateway',
-    'corsheaders',
+    # 'corsheaders',
     # 'userAccounts',
 ]
 
@@ -227,6 +227,8 @@ MQTT_PASSWORD =     os.environ.get("MQTT_PASSWORD")
 #         },
 #     },
 # }
+
+#loging configuration
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -258,6 +260,8 @@ LOGGING = {
 #         "LOCATION": "redis://127.0.0.1:6379",
 #     }
 # }
+
+#cache settings for alerts REST API
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -271,6 +275,3 @@ CACHES = {
 #         "LOCATION": "redis://127.0.0.1:6379/1",
 #     }
 # }
-# CORS_ALLOWED_ORIGINS = [
-#     'https://6674f756b8e00c1a9198641c--rad-marigold-883e04.netlify.app/',  # Replace with your Netlify frontend URL
-# ]

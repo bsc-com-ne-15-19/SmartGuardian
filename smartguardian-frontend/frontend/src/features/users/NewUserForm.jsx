@@ -1,64 +1,96 @@
 import { FlexBetween } from '@/components/FlexBetween';
-import { Login } from '@mui/icons-material';
-import { Box, Button, TextField, Typography, useMediaQuery } from '@mui/material';
+import { Box, Button, TextField, Typography, useMediaQuery, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@mui/material';
 import { Formik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import AnimateButton from '../../components/AnimateButton';
 import Header from '../../components/Header';
+import axios from 'axios';
 
+/**
+ * Schema for validating the create student form fields
+ */
 const createStudentSchema = yup.object().shape({
   firstName: yup.string().required('First Name is required'),
   lastName: yup.string().required('Last Name is required'),
-  age: yup.number().required('Age is required'),
-  address: yup.string().required('Address is required'),
-  phoneNumber: yup.string().required('Phone Number is required'),
-  guardianName: yup.string().required('Guardian Name is required'),
-  guardianAddress: yup.string().required('Guardian Address is required'),
-  guardianPhoneNumber: yup.string().required('Guardian Phonenumber is required'),
-  relationship: yup.string().required('Relationship is required'),
+  student_id: yup.string().required('Student ID is required'),
+  email_address: yup.string().required('Email Address is required'),
+  phone_number: yup.string().required('Phone Number is required'),
+  gender: yup.string().required('Gender is required'),
+  primary_location: yup.string().required('Primary Location is required'),
 });
 
+/**
+ * Initial values for the create student form fields
+ */
 const initialValuesCreateStudent = {
   firstName: '',
   lastName: '',
-  address: '',
-  phoneNumber: '',
-  guardianName: '',
-  guardianAddress: '',
-  guardianPhoneNumber: '',
-  relationship: '',
+  student_id: '',
+  phone_number: '',
+  email_address: '',
+  primary_location:'',
+  gender: '',
 };
 
+/**
+ * Component for the New User Form
+ */
 const NewUserForm = () => {
   const navigate = useNavigate();
-  const createStudent = async (values, onSubmitProps) => {
-    const response = await Login({
-      firstName: values.firstName,
-      lastName: values.lastName,
-      address: values.address,
-      phoneNumber: values.phoneNumber,
-      guardianName: values.guardianName,
-      guardianAddress: values.guardianAddress,
-      guardianPhoneNumber: values.guardianPhoneNumber,
-      relationship: values.relationship,
-    });
-    console.log(response);
-    onSubmitProps.resetForm();
 
-    if (response) {
-      navigate('/home/users');
+  /**
+   * Function to create a new student
+   * @param {Object} values - The form values
+   * @param {Object} onSubmitProps - The formik submit props
+   */
+  const createStudent = async (values, onSubmitProps) => {
+    const data = {
+      student_id: values.student_id,
+      phone_number: {
+        phone_number: values.phone_number,
+        email_address: values.email_address,
+      },
+      primary_location: values.primary_location,
+      first_name: values.firstName,
+      last_name: values.lastName,
+      gender: values.gender,
+    };
+
+    try {
+      const response = await axios.post('http://127.0.0.1:8001/', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log(response.data);
+
+      if (response.status === 200 || response.status === 201) {
+        onSubmitProps.resetForm();
+        navigate('/home/users');
+      } else {
+        console.error('Failed to create student:', response.data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
     }
   };
+
+  /**
+   * Function to handle form submission
+   * @param {Object} values - The form values
+   * @param {Object} onSubmitProps - The formik submit props
+   */
   const handleFormSubmit = async (values, onSubmitProps) => {
     await createStudent(values, onSubmitProps);
   };
+
   const isNonMobile = useMediaQuery('(min-width:600px)');
 
   return (
     <>
       <Header />
-
       <Box mt={10} px={6}>
         <Formik
           onSubmit={handleFormSubmit}
@@ -72,6 +104,7 @@ const NewUserForm = () => {
             handleBlur,
             handleChange,
             handleSubmit,
+            setFieldValue,
             isSubmitting,
           }) => (
             <form onSubmit={handleSubmit}>
@@ -88,12 +121,7 @@ const NewUserForm = () => {
                   '& > div': { gridColumn: isNonMobile ? undefined : 'span 4' },
                 }}
               >
-                <Box
-                  sx={{
-                    gridColumn: 'span 2',
-                    height: 60,
-                  }}
-                >
+                <Box sx={{ gridColumn: 'span 2', height: 60 }}>
                   <TextField
                     size='small'
                     fullWidth
@@ -106,12 +134,7 @@ const NewUserForm = () => {
                     helperText={touched.firstName && errors.firstName}
                   />
                 </Box>
-                <Box
-                  sx={{
-                    gridColumn: 'span 2',
-                    height: 60,
-                  }}
-                >
+                <Box sx={{ gridColumn: 'span 2', height: 60 }}>
                   <TextField
                     size='small'
                     fullWidth
@@ -124,162 +147,94 @@ const NewUserForm = () => {
                     helperText={touched.lastName && errors.lastName}
                   />
                 </Box>
-                <Box
-                  sx={{
-                    gridColumn: 'span 2',
-                    height: 60,
-                  }}
-                >
+                <Box sx={{ gridColumn: 'span 2', height: 60 }}>
                   <TextField
                     size='small'
                     fullWidth
-                    label='Age'
+                    label='Student ID'
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.age}
-                    name='age'
-                    error={Boolean(touched.age) && Boolean(errors.age)}
-                    helperText={touched.age && errors.age}
+                    value={values.student_id}
+                    name='student_id'
+                    error={Boolean(touched.student_id) && Boolean(errors.student_id)}
+                    helperText={touched.student_id && errors.student_id}
                   />
                 </Box>
-                <Box
-                  sx={{
-                    gridColumn: 'span 2',
-                    height: 60,
-                  }}
-                >
+                <Box sx={{ gridColumn: 'span 2', height: 60 }}>
                   <TextField
                     size='small'
                     fullWidth
                     label='Phone Number'
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.phoneNumber}
-                    name='phoneNumber'
-                    error={
-                      Boolean(touched.phoneNumber) && Boolean(errors.phoneNumber)
-                    }
-                    helperText={touched.phoneNumber && errors.phoneNumber}
+                    value={values.phone_number}
+                    name='phone_number'
+                    error={Boolean(touched.phone_number) && Boolean(errors.phone_number)}
+                    helperText={touched.phone_number && errors.phone_number}
                   />
                 </Box>
-                <Box
-                  sx={{
-                    gridColumn: 'span 2',
-                    height: 60,
-                  }}
-                >
+                <Box sx={{ gridColumn: 'span 2', height: 60 }}>
                   <TextField
                     size='small'
                     fullWidth
-                    label='Address'
+                    label='Email Address'
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.address}
-                    name='address'
-                    error={Boolean(touched.address) && Boolean(errors.address)}
-                    helperText={touched.address && errors.address}
+                    value={values.email_address}
+                    name='email_address'
+                    error={Boolean(touched.email_address) && Boolean(errors.email_address)}
+                    helperText={touched.email_address && errors.email_address}
                   />
                 </Box>
-                <Box
-                  sx={{
-                    gridColumn: 'span 2',
-                    height: 60,
-                  }}
-                >
+                <Box sx={{ gridColumn: 'span 2', height: 60 }}>
                   <TextField
                     size='small'
                     fullWidth
-                    label='Guardian Name'
+                    label='Primary Location'
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.guardianName}
-                    name='guardianName'
-                    error={
-                      Boolean(touched.guardianName) && Boolean(errors.guardianName)
-                    }
-                    helperText={touched.guardianName && errors.guardianName}
+                    value={values.primary_location}
+                    name='primary_location'
+                    error={Boolean(touched.primary_location) && Boolean(errors.primary_location)}
+                    helperText={touched.primary_location && errors.primary_location}
                   />
                 </Box>
-                <Box
-                  sx={{
-                    gridColumn: 'span 2',
-                    height: 60,
-                  }}
-                >
-                  <TextField
-                    size='small'
-                    fullWidth
-                    label='Guardian Phone Number'
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.guardianPhoneNumber}
-                    name='guardianPhoneNumber'
-                    error={
-                      Boolean(touched.guardianPhoneNumber) &&
-                      Boolean(errors.guardianPhoneNumber)
-                    }
-                    helperText={
-                      touched.guardianPhoneNumber && errors.guardianPhoneNumber
-                    }
-                  />
+                <Box sx={{ gridColumn: 'span 2', height: 60 }}>
+                  <FormControl component="fieldset">
+                    <FormLabel component="legend">Gender</FormLabel>
+                    <RadioGroup
+                      row
+                      aria-label="gender"
+                      name="gender"
+                      value={values.gender}
+                      onChange={(event) => setFieldValue('gender', event.target.value)}
+                    >
+                      <FormControlLabel value="Female" control={<Radio />} label="Female" />
+                      <FormControlLabel value="Male" control={<Radio />} label="Male" />
+                      <FormControlLabel value="Other" control={<Radio />} label="Other" />
+                    </RadioGroup>
+                    {touched.gender && errors.gender && (
+                      <Typography color="error" variant="body2">
+                        {errors.gender}
+                      </Typography>
+                    )}
+                  </FormControl>
                 </Box>
-                <Box
-                  sx={{
-                    gridColumn: 'span 2',
-                    height: 60,
-                  }}
-                >
-                  <TextField
-                    size='small'
-                    fullWidth
-                    label='Guardian Address'
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.guardianAddress}
-                    name='guardianAddress'
-                    error={
-                      Boolean(touched.guardianAddress) &&
-                      Boolean(errors.guardianAddress)
-                    }
-                    helperText={touched.guardianAddress && errors.guardianAddress}
-                  />
+                <Box sx={{ gridColumn: 'span 2', height: 60 }}>
+                  <AnimateButton>
+                    <Button
+                      disableElevation
+                      disabled={isSubmitting}
+                      fullWidth
+                      size='medium'
+                      type='submit'
+                      variant='contained'
+                      color='primary'
+                    >
+                      Create Student
+                    </Button>
+                  </AnimateButton>
                 </Box>
-                <Box
-                  sx={{
-                    gridColumn: 'span 2',
-                    height: 60,
-                  }}
-                >
-                  <TextField
-                    size='small'
-                    fullWidth
-                    label='Relationship'
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.relationship}
-                    name='relationship'
-                    error={
-                      Boolean(touched.relationship) && Boolean(errors.relationship)
-                    }
-                    helperText={touched.relationship && errors.relationship}
-                  />
-                </Box>
-              </Box>
-
-              <Box mt={1} display='flex' justifyContent='flex-end'>
-                <AnimateButton>
-                  <Button
-                    disableElevation
-                    disabled={isSubmitting}
-                    fullWidth
-                    size='medium'
-                    type='submit'
-                    variant='contained'
-                    color='primary'
-                  >
-                    Create Student
-                  </Button>
-                </AnimateButton>
               </Box>
             </form>
           )}

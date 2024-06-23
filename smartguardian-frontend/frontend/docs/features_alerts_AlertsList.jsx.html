@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: features/alerts/AlertsList.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: features/alerts/AlertsList.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import CrisisAlertIcon from '@mui/icons-material/CrisisAlert';
+import { Box, Button, Stack } from '@mui/material';
+import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
+import { useNavigate } from 'react-router-dom';
+import Header from '../../components/Header';
+
+/**
+ * Component that displays a list of alerts.
+ */
+const AlertsList = () => {
+  const [rows, setRows] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    /**
+     * Fetches the alerts from the server.
+     */
+    /**
+     * Fetches alerts from the server and updates the state with the fetched data.
+     * @returns {Promise&lt;void>} A Promise that resolves when the alerts are fetched and the state is updated.
+     */
+    const fetchAlerts = async () => {
+      try {
+        // const response = await axios.get('http://127.0.0.1:8001/alert_api/alert-summary/');
+        const response = await axios.get('http://127.0.0.1:8001/alert_api/alert-summary/');
+        // Set the fetched alert data to the state variable 'rows'
+        setRows(response.data);
+        const alertData = response.data.map((alert, index) => ({
+          id: index + 1,
+          firstName: alert.student_name.split(' ')[0] || 'Unknown',
+          surname: alert.student_name.split(' ')[1] || 'Unknown',
+          timeTriggerdAlert: alert.timestamp,
+          // timeTriggerdAlert: new Date(alert.timestamp).toLocaleTimeString(),
+          counts: alert.alert_count,
+          location: alert.location || 'Unknown',
+          status: alert.alert_status
+        }));
+        setRows(alertData);
+      } catch (error) {
+        console.error('Error fetching alert data:', error);
+      }
+    };
+
+    fetchAlerts();
+  }, []);
+
+  const columns = [
+    { field: 'id', headerName: '#', width: 50 },
+    { field: 'firstName', headerName: 'FIRST NAME', width: 150 },
+    { field: 'surname', headerName: 'SURNAME', width: 150 },
+    { field: 'timeTriggerdAlert', headerName: 'TIME TRIGGERD ALERT', width: 300 },
+    { field: 'counts', headerName: 'COUNTS', width: 150 },
+    { field: 'location', headerName: 'LAST ALERT LOCATION', width: 400 },
+    // { field: 'status', headerName: 'STATUS', width: 150 },
+    {
+      // field: 'actions',
+      // type: 'actions',
+      // headerName: 'Actions',
+      // width: 150,
+      // cellClassName: 'ACTIONS',
+      // getActions: ({ id }) => {
+      //   return [
+      //     &lt;GridActionsCellItem
+      //       icon={&lt;CrisisAlertIcon />}
+      //       label='View'
+      //       className='textPrimary'
+      //       color='inherit'
+      //       onClick={() => handleViewClick(id)}
+      //     />
+      //   ];
+      // }
+    }
+  ];
+
+  // const handleViewClick = (id) => {
+  //   console.log('View alert with id:', id);
+  //   // Handle the view action here
+  // };
+
+  return (
+    &lt;>
+      &lt;Header />
+      &lt;Box mt={10} px={6}>
+        &lt;Stack justifyContent='space-between' alignItems='center' direction='row'>
+          &lt;h3>Alerts&lt;/h3>
+          {/* &lt;Button variant='contained' onClick={() => navigate('/home/users/create')}>
+            Track Device
+          &lt;/Button> */}
+        &lt;/Stack>
+        &lt;Box
+          sx={{
+            height: 500,
+            width: '100%',
+            '&amp; .actions': {
+              color: 'text.secondary'
+            },
+            '&amp; .textPrimary': {
+              color: 'text.primary'
+            }
+          }}
+        >
+          &lt;DataGrid rows={rows} columns={columns} />
+        &lt;/Box>
+      &lt;/Box>
+    &lt;/>
+  );
+};
+
+export default AlertsList;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html"></a></li><li><a href="global.html#AlertsList">AlertsList</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Form">Form</a></li><li><a href="global.html#NewUserForm">NewUserForm</a></li><li><a href="global.html#User">User</a></li><li><a href="global.html#UsersList">UsersList</a></li><li><a href="global.html#addNewUser">addNewUser</a></li><li><a href="global.html#authApiSlice">authApiSlice</a></li><li><a href="global.html#authSlice">authSlice</a></li><li><a href="global.html#createStudentSchema">createStudentSchema</a></li><li><a href="global.html#deleteUser">deleteUser</a></li><li><a href="global.html#getUsers">getUsers</a></li><li><a href="global.html#initialState">initialState</a></li><li><a href="global.html#initialValuesCreateStudent">initialValuesCreateStudent</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#register">register</a></li><li><a href="global.html#selectById">selectById</a></li><li><a href="global.html#selectIds">selectIds</a></li><li><a href="global.html#selectUsersData">selectUsersData</a></li><li><a href="global.html#selectUsersResult">selectUsersResult</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#usersAdapter">usersAdapter</a></li><li><a href="global.html#usersApiSlice">usersApiSlice</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sun Jun 23 2024 06:28:27 GMT+0200 (Central Africa Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

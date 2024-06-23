@@ -5,15 +5,35 @@ import json
 from .models import LocationData, PhoneNumbers
 from StudentManagerApp.models import Student
 from AlertManagerApp.models import AlertManager
-# from channels.layers import get_channel_layer
-# from asgiref.sync import async_to_sync
 import logging
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 class MQTTSubscriber:
+    """
+    A class representing an MQTT subscriber.
+
+    Attributes:
+        broker_address (str): The address of the MQTT broker.
+        username (str): The username for authentication.
+        password (str): The password for authentication.
+        client (mqtt.Client): The MQTT client instance.
+
+    Methods:
+        on_connect: Callback function for handling connection to the MQTT broker.
+        on_message: Callback function for handling incoming MQTT messages.
+    """
+
     def __init__(self, broker_address, username, password):
+        """
+        Initializes an MQTTSubscriber object.
+
+        Args:
+            broker_address (str): The address of the MQTT broker.
+            username (str): The username for authentication.
+            password (str): The password for authentication.
+        """
         self.broker_address = broker_address
         self.username = username
         self.password = password
@@ -24,11 +44,29 @@ class MQTTSubscriber:
         self.client.on_message = self.on_message
 
     def on_connect(self, client, userdata, flags, rc, properties):
+        """
+        Callback function for handling connection to the MQTT broker.
+
+        Args:
+            client (mqtt.Client): The MQTT client instance.
+            userdata: User-defined data passed to the callback.
+            flags: Response flags sent by the broker.
+            rc (int): The connection result code.
+            properties: Response properties sent by the broker.
+        """
         print(f'Connected with result code {rc}')
         if rc == 0:
             client.subscribe("gps/+")  # Subscribe to the topic
 
     def on_message(self, client, userdata, message):
+        """
+        Callback function for handling incoming MQTT messages.
+
+        Args:
+            client (mqtt.Client): The MQTT client instance.
+            userdata: User-defined data passed to the callback.
+            message (mqtt.MQTTMessage): The received MQTT message.
+        """
         topic = message.topic
         payload = str(message.payload.decode("utf-8"))
         print(f"Received message: {payload} on topic: {topic}")
@@ -59,6 +97,11 @@ class MQTTSubscriber:
 
 @shared_task
 def mqtt_subscriber_task():
+    """
+    Celery task for starting the MQTT subscriber.
+
+    This task connects to the MQTT broker and starts the MQTT client loop.
+    """
     broker_address = "20d34d0715dc40bd94844427c77b2dd5.s1.eu.hivemq.cloud"
     username = "SmartGuardian"
     password = "BSC-COM-NE-15-19@unima.ac.mw"
