@@ -6,11 +6,22 @@ from DeviceApp.models import LocationData
 
 @receiver(post_save, sender=LocationData)
 def send_location_update(sender, instance, **kwargs):
+    """
+    Sends a location update to the 'location_updates' group using the channel layer.
+
+    Args:
+        sender: The sender of the signal.
+        instance: The instance that triggered the signal.
+        **kwargs: Additional keyword arguments.
+
+    Returns:
+        None
+    """
     channel_layer = get_channel_layer()
     group_name = "location_updates"
     
     data = {
-        "phone_number": str( instance.phone_number.phone_number),  # Extract phone number as a string
+        "phone_number": str(instance.phone_number.phone_number),  # Extract phone number as a string
         "student_name": str(instance.student_name),
         "latitude": str(instance.latitude),  # Convert Decimal to string for serialization
         "longitude": str(instance.longitude), 

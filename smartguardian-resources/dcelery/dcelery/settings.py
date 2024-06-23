@@ -227,6 +227,8 @@ MQTT_PASSWORD =     os.environ.get("MQTT_PASSWORD")
 #         },
 #     },
 # }
+
+#loging configuration
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -258,6 +260,8 @@ LOGGING = {
 #         "LOCATION": "redis://127.0.0.1:6379",
 #     }
 # }
+
+#cache settings for alerts REST API
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
