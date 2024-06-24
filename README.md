@@ -1,4 +1,4 @@
-#INSTALLATION GUIDE
+# INSTALLATION GUIDE
 
 To install this product, please follow the steps below:
 
