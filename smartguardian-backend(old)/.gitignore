@@ -7,3 +7,4 @@ denv/
 # Ignore IDE-specific files
 .vscode/
 *.idea/
+db.sqlite3
