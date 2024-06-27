@@ -1,3 +1,8 @@
+/**
+ * Renders the dashboard component.
+ * @component
+ * @returns {JSX.Element} The rendered dashboard component.
+ */
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapProvider } from 'react-map-gl';
 import Header from '../../components/Header';

@@ -3,6 +3,14 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { selectUserById } from './usersApiSlice';
 
+/**
+ * Renders a user component.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.userId - The ID of the user.
+ * @returns {JSX.Element|null} The rendered User component.
+ */
 const User = ({ userId }) => {
   const user = useSelector((state) => selectUserById(state, userId));
   const navigate = useNavigate();

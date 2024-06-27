@@ -1,3 +1,8 @@
+
+/**
+ * Renders the layout of the application.
+ * @returns {JSX.Element} The layout component.
+ */
 import { Stack } from '@mui/material';
 import { MapProvider } from 'react-map-gl';
 import { Outlet } from 'react-router-dom';

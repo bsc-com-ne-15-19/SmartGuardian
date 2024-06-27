@@ -1,7 +1,0 @@
-venv/
-db.sqlite3
-.env
-.D_Store
-__pycache__
-dcelery/debug.log
-dcelery/staticfiles/

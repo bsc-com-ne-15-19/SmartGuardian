@@ -1,3 +1,7 @@
+/**
+ * Renders the login page.
+ * @returns {JSX.Element} The login component.
+ */
 import { Box, Container, Paper } from '@mui/material';
 import Form from './Form';
 
@@ -9,7 +13,7 @@ const Login = () => {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        background: '#fafafb', // Set minimum height to fill the viewport
+        // background: '#fafafb', // Set minimum height to fill the viewport
       }}
     >
       <Container sx={{ maxWidth: { xs: 400, lg: 475 } }}>

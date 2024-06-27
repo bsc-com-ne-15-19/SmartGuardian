@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: features/auth/Form.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: features/auth/Form.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
+  useMediaQuery,
+} from '@mui/material';
+import { Formik } from 'formik';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import * as yup from 'yup';
+import { useLoginMutation } from './authApiSlice';
+import { setLogin } from './authSlice';
+import { FlexBetween } from '@/components/FlexBetween';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import AnimateButton from '../../components/AnimateButton';
+
+const loginSchema = yup.object().shape({
+  username: yup
+    .string().required('Username is required'),
+  password: yup.string().required('Password is required'),
+});
+
+
+const initialValuesLogin = {
+  username: '',
+  password: '',
+};
+
+/**
+ * Form component for user login.
+ *
+ * @component
+ * @example
+ * return (
+ *   &lt;Form />
+ * )
+ */
+const Form = () => {
+  const [login] = useLoginMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isNonMobile = useMediaQuery('(min-width:600px)');
+  const [showPassword, setShowPassword] = useState(false);
+
+  /**
+   * Login user and handle form submission.
+   *
+   * @param {Object} values - Form values.
+   * @param {Object} onSubmitProps - Formik submit props.
+   * @returns {Promise&lt;void>}
+   */
+  const loginUser = async (values, onSubmitProps) => {
+    const response = await login({
+      username: values.username,
+      password: values.password,
+    });
+    // console.log(response);
+    onSubmitProps.resetForm();
+
+    if (response) {
+      const access_token = response.data.access;
+      dispatch(setLogin({ access_token }));
+      // console.log('token here ----:', access_token);
+      navigate('/home');
+    }
+  };
+
+  /**
+   * Handle form submission.
+   *
+   * @param {Object} values - Form values.
+   * @param {Object} onSubmitProps - Formik submit props.
+   * @returns {Promise&lt;void>}
+   */
+  const handleFormSubmit = async (values, onSubmitProps) => {
+    await loginUser(values, onSubmitProps);
+  };
+
+  return (
+    &lt;Formik
+      onSubmit={handleFormSubmit}
+      initialValues={initialValuesLogin}
+      validationSchema={loginSchema}
+    >
+      {({
+        values,
+        errors,
+        touched,
+        handleBlur,
+        handleChange,
+        handleSubmit,
+        isSubmitting,
+      }) => (
+        &lt;form onSubmit={handleSubmit}>
+          &lt;FlexBetween mb={4}>
+            &lt;Typography sx={{ color: '#262626' }} fontSize={22} fontWeight={500}>
+              Login 🚨
+            &lt;/Typography>
+          &lt;/FlexBetween>
+          &lt;Box
+            display='grid'
+            gap={2}
+            gridTemplateColumns='repeat(4, minmax(0, 1fr))'
+            sx={{
+              '&amp; > div': { gridColumn: isNonMobile ? undefined : 'span 4' },
+            }}
+          >
+            &lt;Box
+              sx={{
+                gridColumn: 'span 4',
+                height: 60,
+              }}
+            >
+              &lt;TextField
+                size='small'
+                fullWidth
+                label='User Name'
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.username}
+                name='username'
+                error={Boolean(touched.username) &amp;&amp; Boolean(errors.username)}
+                helperText={touched.username &amp;&amp; errors.username}
+              />
+            &lt;/Box>
+
+            &lt;Box sx={{ gridColumn: 'span 4', height: 40 }}>
+              &lt;TextField
+                fullWidth
+                size='small'
+                label='Password'
+                type={showPassword ? 'text' : 'password'}
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.password}
+                name='password'
+                error={Boolean(touched.password) &amp;&amp; Boolean(errors.password)}
+                helperText={touched.password &amp;&amp; errors.password}
+                InputProps={{
+                  endAdornment: (
+                    &lt;InputAdornment position='end'>
+                      &lt;IconButton
+                        aria-label='toggle password visibility'
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge='end'
+                      >
+                        {showPassword ? &lt;VisibilityOff /> : &lt;Visibility />}
+                      &lt;/IconButton>
+                    &lt;/InputAdornment>
+                  ),
+                }}
+              />
+            &lt;/Box>
+            &lt;Box width={170}>
+              &lt;FormControlLabel
+                label='Keep me sign in'
+                control={
+                  &lt;Checkbox
+                  //   checked={persist}
+                  //   onChange={() => setPersist((prev) => !prev)}
+                  />
+                }
+              />
+            &lt;/Box>
+          &lt;/Box>
+
+          &lt;Box mt={1}>
+            &lt;AnimateButton>
+              &lt;Button
+                disableElevation
+                disabled={isSubmitting}
+                fullWidth
+                size='medium'
+                type='submit'
+                variant='contained'
+                color='primary'
+              >
+                Login
+              &lt;/Button>
+            &lt;/AnimateButton>
+          &lt;/Box>
+        &lt;/form>
+      )}
+    &lt;/Formik>
+  );
+};
+
+export default Form;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html"></a></li><li><a href="global.html#AlertsList">AlertsList</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Form">Form</a></li><li><a href="global.html#NewUserForm">NewUserForm</a></li><li><a href="global.html#User">User</a></li><li><a href="global.html#UsersList">UsersList</a></li><li><a href="global.html#addNewUser">addNewUser</a></li><li><a href="global.html#authApiSlice">authApiSlice</a></li><li><a href="global.html#authSlice">authSlice</a></li><li><a href="global.html#createStudentSchema">createStudentSchema</a></li><li><a href="global.html#deleteUser">deleteUser</a></li><li><a href="global.html#getUsers">getUsers</a></li><li><a href="global.html#initialState">initialState</a></li><li><a href="global.html#initialValuesCreateStudent">initialValuesCreateStudent</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#register">register</a></li><li><a href="global.html#selectById">selectById</a></li><li><a href="global.html#selectIds">selectIds</a></li><li><a href="global.html#selectUsersData">selectUsersData</a></li><li><a href="global.html#selectUsersResult">selectUsersResult</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#usersAdapter">usersAdapter</a></li><li><a href="global.html#usersApiSlice">usersApiSlice</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sun Jun 23 2024 06:28:27 GMT+0200 (Central Africa Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

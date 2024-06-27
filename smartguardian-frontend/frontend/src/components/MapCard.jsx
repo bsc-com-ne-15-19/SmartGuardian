@@ -1,13 +1,21 @@
+/**
+ * @file MapCard.jsx
+ * @desc A component that displays a map and updates markers based on WebSocket data.
+ */
+
 import { CrisisAlert } from '@mui/icons-material';
 import { Stack, Typography } from '@mui/material';
 import React, { useEffect, useRef } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import mapboxgl from 'mapbox-gl';
-// import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder/lib/index';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import '@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css';
+import { process } from 'dotenv';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder/lib/index';
 import './MapCard.css';
 
+/**
+ * Component that displays a map and updates markers based on WebSocket data.
+ * @component
+ */
 mapboxgl.accessToken = 'pk.eyJ1IjoiYXVicmV5bXV3YWxvIiwiYSI6ImNsdGIxZjVvcTFtdmUybW1zcG9jeHFmYmIifQ.hAa-71IJ_PvPa3S981-syw'; // Replace with your actual Mapbox access token
 
 const MapComponent = () => {
@@ -15,11 +23,18 @@ const MapComponent = () => {
   const map = useRef(null);
   const markers = useRef({});
 
+  /**
+   * Component that displays the content of a marker's popup.
+   * @param {Object} props - The component props.
+   * @param {string} props.student_name - The name of the student.
+   * @param {string} props.alert - The alert status of the student.
+   * @returns {JSX.Element} The JSX element representing the popup content.
+   */
   const PopupContent = ({ student_name, alert }) => (
     <Stack pr={1} alignItems="center" spacing={1.5} direction="row">
       <Typography variant="body2">{student_name}</Typography>
       {/* <CrisisAlert sx={{ color: alert === "True" ? 'red' : '#1677ff' }} /> */}
-        {/* <CrisisAlert sx={{ color: alert === "True" ? 'red' : '#1677ff' }} /> */}
+      {/* <CrisisAlert sx={{ color: alert === "True" ? 'red' : '#1677ff' }} /> */}
     </Stack>
   );
 
@@ -28,25 +43,22 @@ const MapComponent = () => {
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      // style: 'mapbox://styles/aubreymuwalo/clx8l7q6n007c01pj2vea2sfo',
-
-      // style: 'mapbox://styles/aubreymuwalo/clx7yizm701x701pn6dnrhhdd',
-
+      style: 'mapbox://styles/aubreymuwalo/clx8l7q6n007c01pj2vea2sfo',
       center: [35.33802, -15.38853],
       zoom: 16
     });
 
-    // map.current.addControl(new MapboxGeocoder({ accessToken: mapboxgl.accessToken, mapboxgl }));
-
-    // Add controls to the map
     map.current.addControl(new mapboxgl.ScaleControl(), 'bottom-left');
     map.current.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
     map.current.addControl(new mapboxgl.FullscreenControl(), 'bottom-right');
     map.current.addControl(new mapboxgl.GeolocateControl({ trackUserLocation: true }), 'bottom-right');
 
-    const socket = new WebSocket('wss://eb5f-105-234-164-2.ngrok-free.app/ws/location_updates/');
+    const socket = new WebSocket('ws://localhost:8001/ws/location_updates/');
 
+    /**
+     * Handles incoming messages from the WebSocket.
+     * @param {MessageEvent} event - The WebSocket message event.
+     */
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       updateMarker(data);
@@ -64,6 +76,15 @@ const MapComponent = () => {
       console.error('WebSocket error: ' + error);
     };
 
+    /**
+     * Updates the marker on the map based on the data received from the WebSocket.
+     * @param {Object} data - The data received from the WebSocket.
+     * @param {string} data.phone_number - The phone number of the student.
+     * @param {string} data.latitude - The latitude of the student's location.
+     * @param {string} data.longitude - The longitude of the student's location.
+     * @param {string} data.alert - The alert status of the student.
+     * @param {string} data.student_name - The name of the student.
+     */
     const updateMarker = (data) => {
       const { phone_number, latitude, longitude, alert, student_name } = data;
       const lat = parseFloat(latitude);
@@ -94,6 +115,11 @@ const MapComponent = () => {
       markers.current[phone_number].lastUpdateTime = Date.now();
     };
 
+    /**
+     * Creates a marker element.
+     * @param {boolean} isAlert - Indicates if the marker represents an alert.
+     * @returns {HTMLElement} The marker element.
+     */
     const createMarkerElement = (isAlert) => {
       const el = document.createElement('div');
       el.className = 'marker';
@@ -103,6 +129,9 @@ const MapComponent = () => {
       return el;
     };
 
+    /**
+     * Checks the markers for updates and updates their appearance if necessary.
+     */
     const checkMarkers = () => {
       const currentTime = Date.now();
       Object.keys(markers.current).forEach((phoneNumber) => {

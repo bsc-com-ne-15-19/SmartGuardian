@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: features/users/NewUserForm.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: features/users/NewUserForm.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { FlexBetween } from '@/components/FlexBetween';
+import { Box, Button, TextField, Typography, useMediaQuery, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@mui/material';
+import { Formik } from 'formik';
+import { useNavigate } from 'react-router-dom';
+import * as yup from 'yup';
+import AnimateButton from '../../components/AnimateButton';
+import Header from '../../components/Header';
+import axios from 'axios';
+
+/**
+ * Schema for validating the create student form fields
+ */
+const createStudentSchema = yup.object().shape({
+  firstName: yup.string().required('First Name is required'),
+  lastName: yup.string().required('Last Name is required'),
+  student_id: yup.string().required('Student ID is required'),
+  email_address: yup.string().required('Email Address is required'),
+  phone_number: yup.string().required('Phone Number is required'),
+  gender: yup.string().required('Gender is required'),
+  primary_location: yup.string().required('Primary Location is required'),
+});
+
+/**
+ * Initial values for the create student form fields
+ */
+const initialValuesCreateStudent = {
+  firstName: '',
+  lastName: '',
+  student_id: '',
+  phone_number: '',
+  email_address: '',
+  primary_location:'',
+  gender: '',
+};
+
+/**
+ * Component for the New User Form
+ */
+const NewUserForm = () => {
+  const navigate = useNavigate();
+
+  /**
+   * Function to create a new student
+   * @param {Object} values - The form values
+   * @param {Object} onSubmitProps - The formik submit props
+   */
+  const createStudent = async (values, onSubmitProps) => {
+    const data = {
+      student_id: values.student_id,
+      phone_number: {
+        phone_number: values.phone_number,
+        email_address: values.email_address,
+      },
+      primary_location: values.primary_location,
+      first_name: values.firstName,
+      last_name: values.lastName,
+      gender: values.gender,
+    };
+
+    try {
+      const response = await axios.post('http://127.0.0.1:8001/', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log(response.data);
+
+      if (response.status === 200 || response.status === 201) {
+        onSubmitProps.resetForm();
+        navigate('/home/users');
+      } else {
+        console.error('Failed to create student:', response.data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  /**
+   * Function to handle form submission
+   * @param {Object} values - The form values
+   * @param {Object} onSubmitProps - The formik submit props
+   */
+  const handleFormSubmit = async (values, onSubmitProps) => {
+    await createStudent(values, onSubmitProps);
+  };
+
+  const isNonMobile = useMediaQuery('(min-width:600px)');
+
+  return (
+    &lt;>
+      &lt;Header />
+      &lt;Box mt={10} px={6}>
+        &lt;Formik
+          onSubmit={handleFormSubmit}
+          initialValues={initialValuesCreateStudent}
+          validationSchema={createStudentSchema}
+        >
+          {({
+            values,
+            errors,
+            touched,
+            handleBlur,
+            handleChange,
+            handleSubmit,
+            setFieldValue,
+            isSubmitting,
+          }) => (
+            &lt;form onSubmit={handleSubmit}>
+              &lt;FlexBetween mb={4}>
+                &lt;Typography sx={{ color: '#262626' }} fontSize={22} fontWeight={500}>
+                  Add New Student
+                &lt;/Typography>
+              &lt;/FlexBetween>
+              &lt;Box
+                display='grid'
+                gap={2}
+                gridTemplateColumns='repeat(4, minmax(0, 1fr))'
+                sx={{
+                  '&amp; > div': { gridColumn: isNonMobile ? undefined : 'span 4' },
+                }}
+              >
+                &lt;Box sx={{ gridColumn: 'span 2', height: 60 }}>
+                  &lt;TextField
+                    size='small'
+                    fullWidth
+                    label='First Name'
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.firstName}
+                    name='firstName'
+                    error={Boolean(touched.firstName) &amp;&amp; Boolean(errors.firstName)}
+                    helperText={touched.firstName &amp;&amp; errors.firstName}
+                  />
+                &lt;/Box>
+                &lt;Box sx={{ gridColumn: 'span 2', height: 60 }}>
+                  &lt;TextField
+                    size='small'
+                    fullWidth
+                    label='Last Name'
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.lastName}
+                    name='lastName'
+                    error={Boolean(touched.lastName) &amp;&amp; Boolean(errors.lastName)}
+                    helperText={touched.lastName &amp;&amp; errors.lastName}
+                  />
+                &lt;/Box>
+                &lt;Box sx={{ gridColumn: 'span 2', height: 60 }}>
+                  &lt;TextField
+                    size='small'
+                    fullWidth
+                    label='Student ID'
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.student_id}
+                    name='student_id'
+                    error={Boolean(touched.student_id) &amp;&amp; Boolean(errors.student_id)}
+                    helperText={touched.student_id &amp;&amp; errors.student_id}
+                  />
+                &lt;/Box>
+                &lt;Box sx={{ gridColumn: 'span 2', height: 60 }}>
+                  &lt;TextField
+                    size='small'
+                    fullWidth
+                    label='Phone Number'
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.phone_number}
+                    name='phone_number'
+                    error={Boolean(touched.phone_number) &amp;&amp; Boolean(errors.phone_number)}
+                    helperText={touched.phone_number &amp;&amp; errors.phone_number}
+                  />
+                &lt;/Box>
+                &lt;Box sx={{ gridColumn: 'span 2', height: 60 }}>
+                  &lt;TextField
+                    size='small'
+                    fullWidth
+                    label='Email Address'
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.email_address}
+                    name='email_address'
+                    error={Boolean(touched.email_address) &amp;&amp; Boolean(errors.email_address)}
+                    helperText={touched.email_address &amp;&amp; errors.email_address}
+                  />
+                &lt;/Box>
+                &lt;Box sx={{ gridColumn: 'span 2', height: 60 }}>
+                  &lt;TextField
+                    size='small'
+                    fullWidth
+                    label='Primary Location'
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.primary_location}
+                    name='primary_location'
+                    error={Boolean(touched.primary_location) &amp;&amp; Boolean(errors.primary_location)}
+                    helperText={touched.primary_location &amp;&amp; errors.primary_location}
+                  />
+                &lt;/Box>
+                &lt;Box sx={{ gridColumn: 'span 2', height: 60 }}>
+                  &lt;FormControl component="fieldset">
+                    &lt;FormLabel component="legend">Gender&lt;/FormLabel>
+                    &lt;RadioGroup
+                      row
+                      aria-label="gender"
+                      name="gender"
+                      value={values.gender}
+                      onChange={(event) => setFieldValue('gender', event.target.value)}
+                    >
+                      &lt;FormControlLabel value="Female" control={&lt;Radio />} label="Female" />
+                      &lt;FormControlLabel value="Male" control={&lt;Radio />} label="Male" />
+                      &lt;FormControlLabel value="Other" control={&lt;Radio />} label="Other" />
+                    &lt;/RadioGroup>
+                    {touched.gender &amp;&amp; errors.gender &amp;&amp; (
+                      &lt;Typography color="error" variant="body2">
+                        {errors.gender}
+                      &lt;/Typography>
+                    )}
+                  &lt;/FormControl>
+                &lt;/Box>
+                &lt;Box sx={{ gridColumn: 'span 2', height: 60 }}>
+                  &lt;AnimateButton>
+                    &lt;Button
+                      disableElevation
+                      disabled={isSubmitting}
+                      fullWidth
+                      size='medium'
+                      type='submit'
+                      variant='contained'
+                      color='primary'
+                    >
+                      Create Student
+                    &lt;/Button>
+                  &lt;/AnimateButton>
+                &lt;/Box>
+              &lt;/Box>
+            &lt;/form>
+          )}
+        &lt;/Formik>
+      &lt;/Box>
+    &lt;/>
+  );
+};
+
+export default NewUserForm;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html"></a></li><li><a href="global.html#AlertsList">AlertsList</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Form">Form</a></li><li><a href="global.html#NewUserForm">NewUserForm</a></li><li><a href="global.html#User">User</a></li><li><a href="global.html#UsersList">UsersList</a></li><li><a href="global.html#addNewUser">addNewUser</a></li><li><a href="global.html#authApiSlice">authApiSlice</a></li><li><a href="global.html#authSlice">authSlice</a></li><li><a href="global.html#createStudentSchema">createStudentSchema</a></li><li><a href="global.html#deleteUser">deleteUser</a></li><li><a href="global.html#getUsers">getUsers</a></li><li><a href="global.html#initialState">initialState</a></li><li><a href="global.html#initialValuesCreateStudent">initialValuesCreateStudent</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#register">register</a></li><li><a href="global.html#selectById">selectById</a></li><li><a href="global.html#selectIds">selectIds</a></li><li><a href="global.html#selectUsersData">selectUsersData</a></li><li><a href="global.html#selectUsersResult">selectUsersResult</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#usersAdapter">usersAdapter</a></li><li><a href="global.html#usersApiSlice">usersApiSlice</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sun Jun 23 2024 06:28:27 GMT+0200 (Central Africa Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
