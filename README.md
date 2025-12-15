@@ -1,4 +1,30 @@
-# INSTALLATION GUIDE
+# SmartGuardian
+
+## Introduction
+
+SmartGuardian is a comprehensive safety and security monitoring application designed to provide real-time location tracking and emergency response capabilities. The system integrates Mapbox mapping functionalities to offer an intuitive interface for monitoring and managing safety-related incidents.
+
+### Key Features
+- Real-time location tracking with interactive map visualization
+- Emergency response coordination
+- User-friendly interface built with modern web technologies
+- Dockerized deployment for easy setup and scalability
+
+### Technology Stack
+- **Frontend**: React + Vite
+- **Backend**: Node.js
+- **Mapping**: Mapbox API
+- **Deployment**: Docker & Docker Compose
+
+### Contributors
+- Aubrey Muwalo
+- Jessy Mnjemu
+- Chance Kondowe
+- Florida Jamu
+
+---
+
+## INSTALLATION GUIDE
 
 To install this product, please follow the steps below:
 
